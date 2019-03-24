@@ -1,6 +1,8 @@
 #import "RSANative.h"
 #import "RSAFormatter.h"
 
+#define CYPHER_ALGORITHM kSecKeyAlgorithmRSAEncryptionOAEPSHA1
+
 // Code largely based on practices as defined by:
 // https://developer.apple.com/library/content/documentation/Security/Conceptual/CertKeyTrustProgGuide/KeyRead.html#//apple_ref/doc/uid/TP40001358-CH222-SW1
 
@@ -148,11 +150,11 @@ typedef void (^SecKeyPerformBlock)(SecKeyRef key);
     void(^encryptor)(SecKeyRef) = ^(SecKeyRef publicKey) {
         BOOL canEncrypt = SecKeyIsAlgorithmSupported(publicKey,
                                                      kSecKeyOperationTypeEncrypt,
-                                                     kSecKeyAlgorithmRSAEncryptionPKCS1);
+                                                     CYPHER_ALGORITHM);
         if (canEncrypt) {
             CFErrorRef error = NULL;
             cipherText = (NSData *)CFBridgingRelease(SecKeyCreateEncryptedData(publicKey,
-                                                                               kSecKeyAlgorithmRSAEncryptionPKCS1,
+                                                                               CYPHER_ALGORITHM,
                                                                                (__bridge CFDataRef)data,
                                                                                &error));
             if (!cipherText) {
@@ -190,11 +192,11 @@ typedef void (^SecKeyPerformBlock)(SecKeyRef key);
 
         BOOL canDecrypt = SecKeyIsAlgorithmSupported(privateKey,
                                                      kSecKeyOperationTypeDecrypt,
-                                                     kSecKeyAlgorithmRSAEncryptionPKCS1);
+                                                     CYPHER_ALGORITHM);
         if (canDecrypt) {
             CFErrorRef error = NULL;
             clearText = (NSData *)CFBridgingRelease(SecKeyCreateDecryptedData(privateKey,
-                                                                              kSecKeyAlgorithmRSAEncryptionPKCS1,
+                                                                              CYPHER_ALGORITHM,
                                                                               (__bridge CFDataRef)data,
                                                                               &error));
             if (!clearText) {
