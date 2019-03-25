@@ -2,6 +2,7 @@
 #import "RSAFormatter.h"
 
 #define CIPHER_ALGORITHM kSecKeyAlgorithmRSAEncryptionOAEPSHA1
+#define SIGN_ALGORITHM kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA256;
 
 // Code largely based on practices as defined by:
 // https://developer.apple.com/library/content/documentation/Security/Conceptual/CertKeyTrustProgGuide/KeyRead.html#//apple_ref/doc/uid/TP40001358-CH222-SW1
@@ -231,7 +232,7 @@ typedef void (^SecKeyPerformBlock)(SecKeyRef key);
     __block NSString *encodedSignature = nil;
 
     void(^signer)(SecKeyRef) = ^(SecKeyRef privateKey) {
-        SecKeyAlgorithm algorithm = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA512;
+        SecKeyAlgorithm algorithm = SIGN_ALGORITHM;
 
         BOOL canSign = SecKeyIsAlgorithmSupported(privateKey,
                                                 kSecKeyOperationTypeSign,
@@ -279,7 +280,7 @@ typedef void (^SecKeyPerformBlock)(SecKeyRef key);
     __block BOOL result = NO;
 
     void(^verifier)(SecKeyRef) = ^(SecKeyRef publicKey) {
-        SecKeyAlgorithm algorithm = kSecKeyAlgorithmRSASignatureMessagePKCS1v15SHA512;
+        SecKeyAlgorithm algorithm = SIGN_ALGORITHM;
 
         BOOL canVerify = SecKeyIsAlgorithmSupported(publicKey,
                                                     kSecKeyOperationTypeVerify,
